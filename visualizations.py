@@ -17,7 +17,7 @@ def get_runs(df: pd.DataFrame, col: str, value: float) -> tuple[np.ndarray, np.n
     df: pd.DataFrame
         Full results loaded from results.csv.gz.
     col: str
-        Column name of the free parameter (e.g. 'r', 'q', 'gamma').
+        Column name of the free parameter (e.g. 'r', 'q', 'rho').
     value: float
         The free parameter's value to select rows for.
 
@@ -43,8 +43,8 @@ def get_runs(df: pd.DataFrame, col: str, value: float) -> tuple[np.ndarray, np.n
         # isolate a single run. pivot() would otherwise fail here with an
         # opaque "Index contains duplicate entries" error.
         other_free_cols = [
-            c for c in ("r", "q", "n_patches", "p_edge", "gamma")
-            if c != col and subset[c].nunique() > 1
+            c for c in ("r", "q", "n_patches", "rho")
+            if c != col and c in subset.columns and subset[c].nunique() > 1
         ]
         if other_free_cols:
             details = ", ".join(f"{c}={sorted(subset[c].unique())}" for c in other_free_cols)
@@ -100,14 +100,14 @@ def generate_visualizations(results_path: str) -> None:
     if len(params.q_vals) > 1:
         free_parameter = {
             'name': "$q$",
-            'name_to_plot': 'Environmental chance probability $q$',
+            'name_to_plot': 'Rate of environmental change $q$',
             'values': params.q_vals,
             'col': "q",
         }
     elif len(params.r_vals) > 1:
         free_parameter = {
             'name': "$r$",
-            'name_to_plot': 'Turnover fraction $r$',
+            'name_to_plot': 'Share of offenders relocating $r$',
             'values': params.r_vals,
             'col': "r",
         }
@@ -118,19 +118,12 @@ def generate_visualizations(results_path: str) -> None:
             'values': params.n_patches_vals,
             'col': "n_patches",
         }
-    elif len(getattr(params, 'p_vals', [0])) > 1:
+    elif len(getattr(params, 'rho_vals', [0])) > 1:
         free_parameter = {
-            'name': "$p$",
-            'name_to_plot': 'Social network edge probability $p$',
-            'values': params.p_vals,
-            'col': "p_edge",
-        }
-    elif len(getattr(params, 'gamma_vals', [0])) > 1:
-        free_parameter = {
-            'name': "γ",
-            'name_to_plot': 'Population turnover rate $\\gamma$',
-            'values': params.gamma_vals,
-            'col': "gamma",
+            'name': "ρ",
+            'name_to_plot': 'Probability of rewiring a social tie $\\rho$',
+            'values': params.rho_vals,
+            'col': "rho",
         }
     else:
         raise ValueError("No free parameter found. Please check the params.py file.")
@@ -312,14 +305,14 @@ def generate_visualizations(results_path: str) -> None:
 
 if __name__ == "__main__":
     # accept the results folder as a command-line argument (e.g. from
-    # run_all.py chaining straight from social_disorg.run_simulation()) so
+    # run_pipeline.py chaining straight from social_disorg.run_simulation()) so
     # this can run non-interactively; fall back to the folder-picker dialog
     # when run standalone with no argument
     if len(sys.argv) > 1:
         results_path = sys.argv[1]
     else:
         # imported lazily: only needed for the interactive fallback, so a
-        # wrapper script that always passes a path (e.g. run_all.py) never
+        # wrapper script that always passes a path (e.g. run_pipeline.py) never
         # needs tkinter installed at all
         from tkinter.filedialog import askdirectory
         results_path = askdirectory(title='Select the folder with simulation results (e.g., 20260528_145008_results)')

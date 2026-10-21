@@ -7,7 +7,7 @@ just wrote is passed straight into visualizations.py automatically - no
 folder-picker dialog, no manual copy-pasting of the output path.
 
 Usage:
-    python run_all.py
+    python run_pipeline.py
 """
 import social_disorg
 import visualizations
