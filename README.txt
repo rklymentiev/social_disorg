@@ -1,9 +1,5 @@
 "Social Disorganization" simulation script
 
-A Python port of the Mathematica model in LearningDisorgBasic_loops.nb (Brantingham &
-Klymentiev, "When should criminal offenders use trial-and-error learning?", Penn State,
-17-09-2026). It implements the same model and has been checked against the notebook's results.
-
 File structure:
 ├── ../02_output/                        # Directory for simulation outputs (generated automatically;
 │   │                                     # path is set by params.output_dir, default '../02_output/')

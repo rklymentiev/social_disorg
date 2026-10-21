@@ -1,8 +1,6 @@
 """
 Social vs. asocial learning among offenders ("Social Disorganization" model).
 
-This is a Python port of Brantingham's Mathematica model
-(LearningDisorgBasic_loops.nb, as presented at Penn State, 17-09-2026).
 Each time step follows the notebook's order:
 
     1. replicator update of learning strategies (fitness-proportional
