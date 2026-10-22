@@ -147,29 +147,29 @@ def make_landscape(
     rng: np.random.Generator
         Random number generator.
     patch_sizes: str
-        "equal": the notebook's Partition[..., UpTo[Ceiling[n/n_patches]]],
-            i.e. consecutive blocks of Ceiling[n/n_patches] sites. When
-            n_patches doesn't divide n this can give fewer patches than
-            asked for (e.g. n=50, n_patches=15 -> 13 blocks), exactly as in
-            Mathematica.
-        "random": the notebook's random-size patches (used for the "40
-            random landscapes" slide): n_patches change points are drawn
-            from 1..n, which splits the ring into n_patches + 1 segments
-            (the first one can be empty).
+        "equal": n_patches consecutive blocks of (nearly) equal size; when
+            n_patches divides n these are exactly the notebook's blocks of
+            n / n_patches sites.
+        "random": n_patches patches of random sizes. n_patches cut points
+            are drawn among the n gaps between neighboring sites of the
+            ring, so there are always exactly n_patches patches, each with
+            at least one site, and a patch may wrap around from the last
+            site to the first.
 
     Returns
     -------
     tuple[np.ndarray, np.ndarray]
         (s_vals, patch_id): cue per site and the patch each site belongs to.
     """
+    if not 1 <= n_patches <= n:
+        raise ValueError(f"n_patches must be between 1 and the number of sites ({n}), got {n_patches}.")
     if patch_sizes == "equal":
-        size = int(np.ceil(n / n_patches))
-        patch_id = np.arange(n) // size
+        patch_id = (np.arange(n) * n_patches) // n
     elif patch_sizes == "random":
-        change = np.sort(rng.choice(np.arange(1, n + 1), size=n_patches, replace=False))
-        change = np.append(change, n + 1)
-        sizes = np.concatenate([[change[0] - 1], np.diff(change)])
-        patch_id = np.repeat(np.arange(sizes.size), sizes)
+        # the k-th patch starts at starts[k] and runs up to the next start;
+        # sites before the first start belong to the last patch (wrap-around)
+        starts = np.sort(rng.choice(n, size=n_patches, replace=False))
+        patch_id = (np.searchsorted(starts, np.arange(n), side="right") - 1) % n_patches
     else:
         raise ValueError(f"patch_sizes must be 'equal' or 'random', got {patch_sizes!r}.")
     values = rng.uniform(0, s_max, size=patch_id.max() + 1)

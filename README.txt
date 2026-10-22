@@ -79,8 +79,9 @@ There are four free parameters:
 (2) `q_vals`: The rate of environmental change (temporal variation). Changes arrive as a Poisson
     process with rate q per time step; at each change every patch gets a new cue value.
 (3) `n_patches_vals`: The number of cue patches (spatial heterogeneity). With
-    patch_sizes = 'equal' the ring is cut into blocks of ceil(N / n_patches) sites, as in the
-    notebook; with 'random' the patches have random sizes.
+    patch_sizes = 'equal' the ring is cut into n_patches blocks of (nearly) equal size (exactly
+    the notebook's blocks when n_patches divides N); with 'random' it is cut at n_patches random
+    places, giving n_patches patches of random sizes.
 (4) `rho_vals`: The probability that each social tie is rewired in a time step (social network
     instability). The ring is rewired afresh every step; rho = 0 keeps the ring.
 For simplicity, use a range of values for exactly one of these parameters while keeping the

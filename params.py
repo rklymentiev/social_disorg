@@ -17,7 +17,7 @@ p_social_init = 0.08  # probability that an offender starts as a social learner 
 n_iterations = 25  # number of runs for each unique combination of parameters [nLoops]
 
 # cue landscape
-patch_sizes = 'equal'  # 'equal': blocks of ceil(N / n_patches) sites; 'random': random patch sizes
+patch_sizes = 'equal'  # 'equal': n_patches blocks of (nearly) equal size; 'random': n_patches patches of random sizes
 landscape_seed = None  # int = same landscape in every run (the notebook uses RandomSeeding->142); None = new landscape per run
 environment_seed = None  # int = same sequence of environmental changes in every run; None = new sequence per run
 
